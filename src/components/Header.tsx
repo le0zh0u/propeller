@@ -9,9 +9,8 @@ const Header = () => {
     <header className="fixed w-full top-0 z-50 bg-black/90 backdrop-blur-sm">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <div className="text-white font-bold text-xl relative group">
-            <span className="relative z-10">PROPELLER</span>
-            <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded" />
+          <div className="relative overflow-hidden rounded-lg bg-gradient-primary px-4 py-2">
+            <span className="text-white font-bold text-xl">PROPELLER</span>
           </div>
 
           {/* Mobile menu button */}
@@ -81,11 +80,8 @@ const Header = () => {
             >
               About Us
             </a>
-            <button className="relative group overflow-hidden bg-black/20 backdrop-blur-sm px-6 py-2 rounded-lg">
-              <span className="relative z-10 text-white group-hover:text-white transition-colors">
-                Talk to us
-              </span>
-              <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <button className="bg-gradient-primary text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+              Talk to us
             </button>
           </div>
         </div>
