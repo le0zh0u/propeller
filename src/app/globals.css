@@ -2,20 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    @apply bg-black text-white antialiased;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container {
+    @apply px-4 mx-auto;
+  }
+}
+
+/* Custom animations */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 20s linear infinite;
+}
+
+.clients-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.clients-track {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.clients-track > * {
+  display: inline-block;
+}
+
+/* Gradient utilities */
+.bg-gradient-primary {
+  background: linear-gradient(90deg, #8c52ff 0%, #00bf63 100%);
+}
+
+.text-primary-end {
+  color: #00bf63;
 }
