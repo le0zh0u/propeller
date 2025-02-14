@@ -16,12 +16,14 @@ const Operations = () => {
         </div>
         <div className="order-1 md:order-2">
           <h2 className="text-4xl font-bold mb-6">
-            Iterative & Relentless Growth Operations
+            Content & Marketing Engine
           </h2>
           <p className="text-gray-400 mb-8">
-            We believe in hypothesis-driven growth and iterate until we get
-            results. Our operations team works tirelessly to optimize and scale
-            your success.
+            From the first brainstorm to the moment your campaign goes viral, we
+            handle it all: content planning, production, China-specific growth
+            strategies, and global digital amplification. Think of us as your
+            multilingual, multi-platform powerhouse—turning ideas into
+            measurable impact.
           </p>
           <button className="bg-gradient-primary text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity">
             Explore Our Process

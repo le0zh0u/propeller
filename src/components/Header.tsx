@@ -7,7 +7,7 @@ const Header = () => {
 
   return (
     <header className="fixed w-full top-0 z-50 bg-black/90 backdrop-blur-sm">
-      <nav className="container mx-auto px-4 py-4">
+      <nav className="container mx-auto px-4 py-4 max-w-5xl">
         <div className="flex justify-between items-center">
           <div className="relative overflow-hidden rounded-lg bg-gradient-primary px-4 py-2">
             <span className="text-white font-bold text-xl">PROPELLER</span>

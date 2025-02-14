@@ -4,12 +4,16 @@ const Growth = () => {
       <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div>
           <h2 className="text-4xl font-bold mb-6">
-            Result-Focused & Data-Driven Growth Strategies
+            Bridging China & the World
           </h2>
           <p className="text-gray-400 mb-8">
-            We combine data analytics with creative strategies to drive
-            measurable growth. Our approach is systematic, scalable, and proven
-            to deliver results.
+            Innovation thrives at intersections. Our proprietary China Sci-Tech
+            Startup Database unlocks local insights, while curated Innovation
+            Exploration Tours immerse global leaders in China’s tech ecosystem.
+            Need precise connections? Our Point-to-Point Match-Making turns
+            cross-border potential into partnerships. Driven by curiosity,
+            powered by data, we propel brands beyond borders. Let’s build what’s
+            next.
           </p>
           <button className="bg-gradient-primary text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity">
             Learn More

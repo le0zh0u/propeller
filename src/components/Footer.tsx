@@ -1,7 +1,9 @@
+import Link from "next/link";
+
 const Footer = () => {
   return (
     <footer className="bg-gray-900/50 backdrop-blur-sm py-12 px-4">
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-5xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="font-bold text-xl mb-4 text-white">PROPELLER</div>
@@ -45,16 +47,23 @@ const Footer = () => {
             <h3 className="font-bold mb-4 text-white">Connect</h3>
             <ul className="space-y-2">
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Twitter
+                <Link href="https://www.linkedin.com/company/globalpropeller">
+                  LinkedIn
+                </Link>
               </li>
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                LinkedIn
+                YouTube
               </li>
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Instagram
+                <Link href="https://mingai01.substack.com/">Substack</Link>
               </li>
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Facebook
+                <Link
+                  href="mailto:business@globalpropeller.com"
+                  className="flex justify-start items-center"
+                >
+                  Email
+                </Link>
               </li>
             </ul>
           </div>

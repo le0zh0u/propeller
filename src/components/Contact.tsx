@@ -15,11 +15,10 @@ const Contact = () => {
     <section className="py-20 px-4">
       <div className="container mx-auto text-center">
         <h2 className="text-4xl font-bold mb-4 text-white">
-          Ready to accelerate your growth?
+          Ready to Innovate, Create, and Amplify?
         </h2>
         <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
-          Let&apos;s discuss how we can help your business reach its full
-          potential
+          Let&apos;s Chat, Today 🏄
         </p>
         <form onSubmit={handleSubmit} className="max-w-md mx-auto">
           <div className="relative">
