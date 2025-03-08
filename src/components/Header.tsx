@@ -75,9 +75,12 @@ const Header = () => {
             >
               About Us
             </a> */}
-            <button className="bg-gradient-primary text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+            <Link
+              href="mailto:business@globalpropeller.com"
+              className="bg-gradient-primary text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
+            >
               Talk to us
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
