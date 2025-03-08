@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const Header = () => {
@@ -50,36 +51,30 @@ const Header = () => {
                 : "hidden"
             } md:static md:bg-transparent md:p-0 md:space-y-0`}
           >
-            <a
-              href="#"
+            <Link
+              href="/"
               className="text-white hover:text-primary-purple transition-colors"
             >
               Home
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/innovation"
               className="text-white hover:text-primary-purple transition-colors"
             >
-              Solutions
-            </a>
-            <a
-              href="#"
+              Innovation
+            </Link>
+            <Link
+              href="/content"
               className="text-white hover:text-primary-purple transition-colors"
             >
-              Showcase
-            </a>
-            <a
-              href="#"
-              className="text-white hover:text-primary-purple transition-colors"
-            >
-              Services
-            </a>
-            <a
+              Content
+            </Link>
+            {/* <a
               href="#"
               className="text-white hover:text-primary-purple transition-colors"
             >
               About Us
-            </a>
+            </a> */}
             <button className="bg-gradient-primary text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
               Talk to us
             </button>

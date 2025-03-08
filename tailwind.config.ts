@@ -18,6 +18,8 @@ const config: Config = {
       },
       backgroundImage: {
         "gradient-primary": "linear-gradient(90deg, #8c52ff 0%, #00bf63 100%)",
+        "radial-gradient":
+          "radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 70%)",
       },
     },
   },
