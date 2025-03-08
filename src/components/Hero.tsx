@@ -12,8 +12,6 @@ const Hero = () => {
     "from-primary-purple to-primary-green", // 默认渐变 - 创新
     "from-blue-500 to-purple-600", // 创造
     "from-purple-600 to-pink-500", // 扩大
-    "from-amber-500 to-orange-600", // 启发
-    "from-emerald-500 to-teal-600", // 转变
   ];
 
   // 处理文本变化的回调
@@ -53,13 +51,7 @@ const Hero = () => {
                 }}
               >
                 <TextRotate
-                  texts={[
-                    "Innovate.",
-                    "Create.",
-                    "Amplify.",
-                    "Inspire.",
-                    "Transform.",
-                  ]}
+                  texts={["Innovate.", "Create.", "Amplify."]}
                   mainClassName="text-white inline-flex"
                   staggerFrom="last"
                   staggerDuration={0.025}
