@@ -4,29 +4,25 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900/50 backdrop-blur-sm py-12 px-4">
       <div className="container mx-auto max-w-5xl">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="font-bold text-xl mb-4 text-white">PROPELLER</div>
             <p className="text-gray-400">Content and Innovation Studio</p>
           </div>
           <div>
-            <h3 className="font-bold mb-4 text-white">Services</h3>
+            <h3 className="font-bold mb-4 text-white">Follow us </h3>
             <ul className="space-y-2">
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Content Creation
+                <Link href="https://www.linkedin.com/company/globalpropeller">
+                  LinkedIn
+                </Link>
               </li>
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Digital Strategy
-              </li>
-              <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Brand Development
-              </li>
-              <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                Innovation Labs
+                <Link href="https://mingai01.substack.com/">Substack</Link>
               </li>
             </ul>
           </div>
-          <div>
+          {/* <div>
             <h3 className="font-bold mb-4 text-white">Company</h3>
             <ul className="space-y-2">
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
@@ -42,27 +38,13 @@ const Footer = () => {
                 Blog
               </li>
             </ul>
-          </div>
+          </div> */}
           <div>
-            <h3 className="font-bold mb-4 text-white">Connect</h3>
+            <h3 className="font-bold mb-4 text-white">Contact us </h3>
             <ul className="space-y-2">
               <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                <Link href="https://www.linkedin.com/company/globalpropeller">
-                  LinkedIn
-                </Link>
-              </li>
-              <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                YouTube
-              </li>
-              <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                <Link href="https://mingai01.substack.com/">Substack</Link>
-              </li>
-              <li className="text-gray-400 hover:text-primary-purple transition-colors cursor-pointer">
-                <Link
-                  href="mailto:business@globalpropeller.com"
-                  className="flex justify-start items-center"
-                >
-                  Email
+                <Link href="mailto:business@globalpropeller.com">
+                  business@globalpropeller.com
                 </Link>
               </li>
             </ul>
