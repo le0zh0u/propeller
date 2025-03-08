@@ -1,3 +1,7 @@
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+
 const Operations = () => {
   return (
     <section className="py-20 px-4">
@@ -25,9 +29,21 @@ const Operations = () => {
             multilingual, multi-platform powerhouse—turning ideas into
             measurable impact.
           </p>
-          <button className="bg-gradient-primary text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity">
-            Explore Our Process
-          </button>
+          <Link href="/content">
+            <Button
+              variant="default"
+              size="lg"
+              className="group bg-gradient-primary hover:opacity-90 transition-opacity"
+            >
+              Explore Our Process
+              <ArrowRight
+                className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5"
+                size={16}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
