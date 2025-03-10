@@ -78,12 +78,12 @@ const Header = () => {
             >
               Content
             </Link>
-            {/* <a
-              href="#"
+            <Link
+              href="/aboutus"
               className="text-white hover:text-primary-purple transition-colors"
             >
               About Us
-            </a> */}
+            </Link>
             <Link
               href="mailto:business@globalpropeller.com"
               className="bg-gradient-primary text-white px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
