@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
+import Image from "next/image";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -10,8 +10,17 @@ const Header = () => {
     <header className="fixed w-full top-0 z-50 bg-black/90 backdrop-blur-sm">
       <nav className="container mx-auto px-4 py-4 max-w-5xl">
         <div className="flex justify-between items-center">
-          <div className="relative overflow-hidden rounded-lg bg-gradient-primary px-4 py-2">
-            <span className="text-white font-bold text-xl">PROPELLER</span>
+          <div className="relative overflow-hidden rounded-lg bg-gradient-primary px-2 py-2">
+            {/* White transparent mask */}
+            <div className="absolute inset-0 bg-white/40 z-0"></div>
+            {/* <span className="text-white font-bold text-xl">PROPELLER</span> */}
+            <Image
+              src="/logo.png"
+              alt="Global Propeller Logo"
+              width={100}
+              height={100}
+              className="relative z-10"
+            />
           </div>
 
           {/* Mobile menu button */}
