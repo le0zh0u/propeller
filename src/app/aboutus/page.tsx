@@ -2,7 +2,7 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AboutUsHero from "@/components/AboutUsHero";
-import ImageCarousel from "@/components/ImageCarousel";
+import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import Link from "next/link";
 
 const AboutUsPage = () => {
@@ -23,8 +23,24 @@ const AboutUsPage = () => {
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4">
-        {/* Image Carousel */}
-        <ImageCarousel images={carouselImages} />
+        {/* Image Carousel - Using InfiniteSlider */}
+        <div className="my-12">
+          <InfiniteSlider
+            gap={24}
+            duration={25}
+            durationOnHover={75}
+            className="py-4"
+          >
+            {carouselImages.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`About us image ${index + 1}`}
+                className="h-[150px] w-auto object-contain rounded-lg"
+              />
+            ))}
+          </InfiniteSlider>
+        </div>
 
         {/* Turnaround Section */}
         <section className="py-16">

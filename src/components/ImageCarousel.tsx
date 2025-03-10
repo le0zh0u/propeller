@@ -7,24 +7,53 @@ import { motion, AnimatePresence } from "framer-motion";
 interface ImageCarouselProps {
   images: string[];
   interval?: number;
+  intervalOnHover?: number;
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({
   images,
   interval = 3000,
+  intervalOnHover = 6000,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentInterval, setCurrentInterval] = useState(interval);
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
+  const startTimer = (intervalTime: number) => {
+    if (timerId) {
+      clearInterval(timerId);
+    }
+
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, interval);
+    }, intervalTime);
 
-    return () => clearInterval(timer);
-  }, [images.length, interval]);
+    setTimerId(timer);
+    return timer;
+  };
+
+  useEffect(() => {
+    const timer = startTimer(currentInterval);
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [images.length, currentInterval]);
+
+  const handleMouseEnter = () => {
+    setCurrentInterval(intervalOnHover);
+  };
+
+  const handleMouseLeave = () => {
+    setCurrentInterval(interval);
+  };
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-12 relative h-64 md:h-80 overflow-hidden rounded-lg">
+    <div
+      className="w-full max-w-4xl mx-auto my-12 relative h-64 md:h-80 overflow-hidden rounded-lg"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
