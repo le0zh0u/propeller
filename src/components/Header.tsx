@@ -12,7 +12,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="relative overflow-hidden rounded-lg bg-gradient-primary px-2 py-2">
             {/* White transparent mask */}
-            <div className="absolute inset-0 bg-white/40 z-0"></div>
+            <div className="absolute inset-0  z-0"></div>
             {/* <span className="text-white font-bold text-xl">PROPELLER</span> */}
             <Image
               src="/logo-white.jpg"
