@@ -15,7 +15,7 @@ const Header = () => {
             <div className="absolute inset-0 bg-white/40 z-0"></div>
             {/* <span className="text-white font-bold text-xl">PROPELLER</span> */}
             <Image
-              src="/logo.png"
+              src="/logo-white.jpg"
               alt="Global Propeller Logo"
               width={100}
               height={100}
