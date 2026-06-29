@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SectionHeading from '../../components/SectionHeading'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const categories = [
   {
@@ -54,6 +50,7 @@ function AnimatedCount({ target, inView }: { target: number; inView: boolean }) 
 export default function PartnerNetworkSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const [inView, setInView] = useState(false)
+  const [cardsVisible, setCardsVisible] = useState(false)
 
   useEffect(() => {
     const el = sectionRef.current
@@ -63,28 +60,16 @@ export default function PartnerNetworkSection() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true)
+          // Stagger card appearance
+          setTimeout(() => setCardsVisible(true), 100)
           observer.disconnect()
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     )
     observer.observe(el)
 
-    const ctx = gsap.context(() => {
-      gsap.from(el.querySelectorAll('.partner-card'), {
-        y: 30,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 80%' },
-      })
-    }, el)
-
-    return () => {
-      ctx.revert()
-      observer.disconnect()
-    }
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -95,11 +80,16 @@ export default function PartnerNetworkSection() {
           title="Our Partner Network"
           description="PROPELLER is powered by a trusted network across academia, industry, capital, media, and entrepreneurial communities."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
-          {categories.map((c) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
+          {categories.map((c, i) => (
             <div
               key={c.label}
-              className="partner-card bg-graphite rounded-card p-7 border border-transparent hover:border-brand-blue/20 transition-all duration-250 hover:-translate-y-0.5"
+              className="bg-graphite rounded-card p-7 border border-transparent hover:border-brand-blue/20 transition-all duration-500 hover:-translate-y-0.5"
+              style={{
+                opacity: cardsVisible ? 1 : 0,
+                transform: cardsVisible ? 'translateY(0)' : 'translateY(30px)',
+                transitionDelay: `${i * 100}ms`,
+              }}
             >
               <span className="font-display text-4xl text-brand-blue font-normal">
                 <AnimatedCount target={c.count} inView={inView} />
