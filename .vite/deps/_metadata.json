@@ -1,0 +1,54 @@
+{
+  "hash": "1170f99b",
+  "configHash": "a74da6e4",
+  "lockfileHash": "2e9f2f85",
+  "browserHash": "26f7f4de",
+  "optimized": {
+    "framer-motion": {
+      "src": "../../node_modules/.pnpm/framer-motion@12.42.2_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/framer-motion/dist/es/index.mjs",
+      "file": "framer-motion.js",
+      "fileHash": "19fec7d5",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/.pnpm/lucide-react@0.562.0_react@19.2.7/node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "48ff7159",
+      "needsInterop": false
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/.pnpm/react-dom@19.2.7_react@19.2.7/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "e3bbe9e0",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/.pnpm/react-router-dom@7.18.1_react-dom@19.2.7_react@19.2.7__react@19.2.7/node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "20cbdd45",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/.pnpm/react@19.2.7/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "90525a0f",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/.pnpm/react@19.2.7/node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "320fcc91",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "react-dom-De_qfD7k": {
+      "file": "react-dom-De_qfD7k.js",
+      "isDynamicEntry": false
+    },
+    "rolldown-runtime-B-1-B7_t": {
+      "file": "rolldown-runtime-B-1-B7_t.js",
+      "isDynamicEntry": false
+    }
+  }
+}
