@@ -24,7 +24,7 @@ export default function FooterSection() {
                 Move with clarity, confidence, and trusted local access.
               </span>
               <span className="block text-sm md:text-base text-white/70 tracking-wide transition-colors duration-500 group-hover:text-[#008080]">
-                Start with Compass. Enter with Access. Grow with PROPELLER.
+                Chart your course with Compass. Unlock the market with Access. Grow with PROPELLER.
               </span>
             </span>
           </a>
