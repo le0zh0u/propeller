@@ -94,10 +94,11 @@ export default function HeroSection() {
           </span>
         </div>
 
-        {/* C A G Giant Typography */}
+        {/* C A G Giant Typography — Compass, Access, Growth */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: cagOpacity }}>
-          <span className="absolute font-black leading-none tracking-tighter text-white select-none" style={{ fontSize: '25vmin', right: '50%', marginRight: '18vmin' }}>C</span>
-          <span className="absolute font-black leading-none tracking-tighter text-white select-none" style={{ fontSize: '25vmin', left: '50%', marginLeft: '14vmin' }}>G</span>
+          <span className="font-black leading-none tracking-tighter text-white select-none flex items-center gap-[6vmin]" style={{ fontSize: '25vmin' }}>
+            <span>C</span><span>A</span><span>G</span>
+          </span>
         </div>
 
         {/* Hidden background text */}

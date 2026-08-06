@@ -33,7 +33,7 @@ function SectionHeading() {
   return (
     <>
       <span className="uppercase tracking-[0.3em] text-[10px] md:text-sm text-[#3533cd] font-semibold mb-2 block">Our Services</span>
-      <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-3 md:mb-6">Our Core<br />Expertise.</h2>
+      <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-3 md:mb-6">Engagement<br />Model.</h2>
       <p className="text-sm md:text-lg text-slate-400 max-w-sm">
         Three strategic phases to guide your journey into China&apos;s innovation ecosystem.
       </p>
@@ -159,7 +159,7 @@ function ServicesDesktop() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative hidden md:block -mt-[100vh]" style={{ height: '300vh' }}>
+    <section ref={containerRef} className="relative hidden md:block" style={{ height: '300vh' }}>
       <div className="sticky top-0 h-screen flex flex-row items-center overflow-hidden bg-[#0a0f1a]">
         {/* Left Text Column */}
         <div className="w-2/5 flex flex-col justify-center px-12 lg:px-16">

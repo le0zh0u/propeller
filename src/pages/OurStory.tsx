@@ -31,14 +31,72 @@ export default function OurStory() {
       </div>
 
       <div className="relative z-10">
-        {/* Hero */}
-        <section className="min-h-[85vh] flex items-center justify-center px-4 md:px-6">
-          <div className="text-center max-w-4xl mx-auto">
-            <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-6 block">Our Story</span>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6">
+        {/* Hero — sparkling ocean background */}
+        <section className="min-h-[85vh] relative flex items-center justify-center px-4 md:px-6 overflow-hidden">
+          {/* Dynamic sparkling ocean (CSS shader-style animation) */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="ocean-caustics absolute inset-0" />
+            <div className="ocean-sparkles absolute inset-0" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1a]/70 via-transparent to-[#0a0f1a]" />
+          </div>
+          <style>{`
+            @keyframes causticsMove {
+              0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
+              50%  { background-position: 25% 35%, 75% 65%, 45% 55%; }
+              100% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+            }
+            .ocean-caustics {
+              background:
+                radial-gradient(ellipse 60% 40% at 30% 65%, rgba(0,128,128,0.28), transparent 70%),
+                radial-gradient(ellipse 50% 35% at 70% 35%, rgba(53,51,205,0.24), transparent 70%),
+                radial-gradient(ellipse 40% 30% at 50% 85%, rgba(0,190,190,0.16), transparent 70%);
+              animation: causticsMove 14s ease-in-out infinite alternate;
+            }
+            @keyframes twinkle {
+              0%   { opacity: 0.15; transform: translateY(0); }
+              100% { opacity: 0.85; transform: translateY(-8px); }
+            }
+            .ocean-sparkles {
+              background-image:
+                radial-gradient(1.5px 1.5px at 20px 30px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(1px 1px at 75px 95px, rgba(160,220,255,0.8), transparent),
+                radial-gradient(2px 2px at 125px 45px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1.5px 1.5px at 165px 125px, rgba(140,200,255,0.8), transparent),
+                radial-gradient(1px 1px at 100px 160px, rgba(255,255,255,0.6), transparent);
+              background-size: 200px 200px;
+              animation: twinkle 3.2s ease-in-out infinite alternate;
+            }
+            .ocean-sparkles::before {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background-image:
+                radial-gradient(1.5px 1.5px at 50px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 140px 30px, rgba(170,225,255,0.7), transparent),
+                radial-gradient(2px 2px at 220px 110px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1.5px 1.5px at 90px 180px, rgba(150,210,255,0.7), transparent);
+              background-size: 320px 320px;
+              animation: twinkle 4.6s ease-in-out infinite alternate-reverse;
+            }
+            .ocean-sparkles::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background-image:
+                radial-gradient(1px 1px at 40px 120px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1.5px 1.5px at 180px 60px, rgba(160,220,255,0.8), transparent),
+                radial-gradient(1px 1px at 240px 200px, rgba(255,255,255,0.6), transparent);
+              background-size: 260px 260px;
+              animation: twinkle 3.9s ease-in-out infinite alternate;
+              animation-delay: -1.4s;
+            }
+          `}</style>
+          <div className="relative text-center max-w-4xl mx-auto">
+            <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-8 block">Our Story</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.2] mb-10">
               Propelling Cross-Border<br />Innovation.
             </h1>
-            <p className="text-lg md:text-xl text-slate-400 font-light">
+            <p className="text-lg md:text-xl text-slate-400 font-light leading-loose">
               — Because competent ideas refuse to stay in their lane.
             </p>
           </div>
@@ -52,7 +110,7 @@ export default function OurStory() {
               <h2 className="text-3xl md:text-4xl font-black text-white mb-8">The Fish That Never Existed.</h2>
 
               <blockquote className="border-l-2 border-[#008080] pl-6 mb-8 italic text-white/90 text-lg leading-relaxed">
-                Some say the fish never existed, yet its legend swims on: a creature so elusive it forced us to reconsider the entire food chain.
+                Some say <a href="https://www.goodreads.com/book/show/50887097-why-fish-don-t-exist" target="_blank" rel="noopener noreferrer" className="text-[#008080] underline decoration-[#008080]/40 underline-offset-4 hover:decoration-[#008080] transition-colors not-italic font-semibold">the fish</a> never existed, yet its legend swims on: a creature so elusive it forced us to reconsider the entire food chain.
               </blockquote>
 
               <p className="text-slate-400 leading-relaxed mb-6">
@@ -82,6 +140,15 @@ export default function OurStory() {
                   <span className="uppercase tracking-[0.3em] text-xs text-[#3533cd] font-semibold">MIT 2.0</span>
                   <h3 className="text-2xl font-bold text-white">Building 20 — The Magical Incubator</h3>
                 </div>
+              </div>
+
+              {/* MIT Building 20 (MIT 2.0) */}
+              <div className="rounded-xl overflow-hidden mb-8 border border-white/10">
+                <img
+                  src="/images/mit-building-20.png"
+                  alt="MIT Building 20 (MIT 2.0)"
+                  className="w-full aspect-[16/9] object-cover"
+                />
               </div>
               <p className="text-slate-400 leading-relaxed mb-4">
                 Building 20 at MIT was a ramshackle wooden structure that housed some of the most groundbreaking innovations of the 20th century. Its genius lay not in its architecture, but in its deliberate lack of organization — forcing researchers from different disciplines to collide, share ideas, and cross-pollinate.
