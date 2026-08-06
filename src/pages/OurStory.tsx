@@ -1,10 +1,106 @@
-import { useEffect } from 'react';
-import { ArrowRight, Waves, Wind, Anchor, Building2 } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { ArrowRight, Building2 } from 'lucide-react';
+
+/* Canvas-rendered sparkling water glints (波光粼粼) */
+function OceanSparkles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let raf = 0;
+    let w = 0;
+    let h = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    type Particle = { x: number; y: number; r: number; speed: number; phase: number; hue: number; drift: number; flare: boolean };
+    let particles: Particle[] = [];
+
+    const spawn = () => {
+      const count = Math.floor((w * h) / 7000);
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        // weighted toward the lower 2/3, like light on a sea surface
+        y: h * 0.2 + Math.random() * h * 0.8,
+        r: 0.8 + Math.random() * 2.2,
+        speed: 0.8 + Math.random() * 2.2,
+        phase: Math.random() * Math.PI * 2,
+        hue: 185 + Math.random() * 35,
+        drift: 4 + Math.random() * 10,
+        flare: Math.random() < 0.18,
+      }));
+    };
+
+    const resize = () => {
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      spawn();
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    let last = 0;
+    const tick = (t: number) => {
+      const dt = Math.min(0.05, (t - last) / 1000 || 0);
+      last = t;
+      const time = t / 1000;
+      ctx.clearRect(0, 0, w, h);
+
+      for (const p of particles) {
+        p.x += p.drift * dt;
+        if (p.x > w + 10) p.x = -10;
+
+        const tw = (Math.sin(time * p.speed + p.phase) + 1) / 2;
+        const a = tw * tw * 0.95; // spend more time dim, flash bright
+        if (a < 0.02) continue;
+
+        const r = p.r * (0.6 + tw * 0.8);
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3.5);
+        g.addColorStop(0, `hsla(${p.hue}, 95%, 88%, ${a})`);
+        g.addColorStop(0.35, `hsla(${p.hue}, 95%, 72%, ${a * 0.55})`);
+        g.addColorStop(1, 'transparent');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * 3.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // star flare on peak twinkle
+        if (p.flare && tw > 0.65) {
+          const la = ((tw - 0.65) / 0.35) * 0.8;
+          const len = r * 6;
+          ctx.strokeStyle = `hsla(${p.hue}, 95%, 90%, ${la})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(p.x - len, p.y);
+          ctx.lineTo(p.x + len, p.y);
+          ctx.moveTo(p.x, p.y - len * 0.6);
+          ctx.lineTo(p.x, p.y + len * 0.6);
+          ctx.stroke();
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
+}
 
 const propellerPrinciples = [
-  { title: 'Pulls in diverse currents', desc: 'We absorb perspectives from every culture and vertical, bringing them into productive collision.', icon: Waves, accent: '#3533cd' },
-  { title: 'Swirls them into productive turbulence', desc: 'We agitate ideas in open collaboration, creating the conditions for breakthrough innovation.', icon: Wind, accent: '#008080' },
-  { title: 'Drives the entire vessel forward', desc: 'We thrust solutions toward a healthier, more sustainable horizon.', icon: Anchor, accent: '#3533cd' },
+  { title: 'Pulls in diverse currents', desc: 'We absorb perspectives from every culture and vertical, bringing them into productive collision.', accent: '#3533cd' },
+  { title: 'Swirls them into productive turbulence', desc: 'We agitate ideas in open collaboration, creating the conditions for breakthrough innovation.', accent: '#008080' },
+  { title: 'Drives the entire vessel forward', desc: 'We thrust solutions toward a healthier, more sustainable horizon.', accent: '#3533cd' },
 ];
 
 export default function OurStory() {
@@ -33,11 +129,11 @@ export default function OurStory() {
       <div className="relative z-10">
         {/* Hero — sparkling ocean background */}
         <section className="min-h-[85vh] relative flex items-center justify-center px-4 md:px-6 overflow-hidden">
-          {/* Dynamic sparkling ocean (CSS shader-style animation) */}
+          {/* Dynamic sparkling ocean (canvas glints + CSS caustics) */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="ocean-caustics absolute inset-0" />
-            <div className="ocean-sparkles absolute inset-0" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1a]/70 via-transparent to-[#0a0f1a]" />
+            <OceanSparkles />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1a]/50 via-transparent to-[#0a0f1a]/80" />
           </div>
           <style>{`
             @keyframes causticsMove {
@@ -47,48 +143,10 @@ export default function OurStory() {
             }
             .ocean-caustics {
               background:
-                radial-gradient(ellipse 60% 40% at 30% 65%, rgba(0,128,128,0.28), transparent 70%),
-                radial-gradient(ellipse 50% 35% at 70% 35%, rgba(53,51,205,0.24), transparent 70%),
-                radial-gradient(ellipse 40% 30% at 50% 85%, rgba(0,190,190,0.16), transparent 70%);
+                radial-gradient(ellipse 60% 40% at 30% 65%, rgba(0,128,128,0.35), transparent 70%),
+                radial-gradient(ellipse 50% 35% at 70% 35%, rgba(53,51,205,0.3), transparent 70%),
+                radial-gradient(ellipse 40% 30% at 50% 85%, rgba(0,190,190,0.22), transparent 70%);
               animation: causticsMove 14s ease-in-out infinite alternate;
-            }
-            @keyframes twinkle {
-              0%   { opacity: 0.15; transform: translateY(0); }
-              100% { opacity: 0.85; transform: translateY(-8px); }
-            }
-            .ocean-sparkles {
-              background-image:
-                radial-gradient(1.5px 1.5px at 20px 30px, rgba(255,255,255,0.9), transparent),
-                radial-gradient(1px 1px at 75px 95px, rgba(160,220,255,0.8), transparent),
-                radial-gradient(2px 2px at 125px 45px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1.5px 1.5px at 165px 125px, rgba(140,200,255,0.8), transparent),
-                radial-gradient(1px 1px at 100px 160px, rgba(255,255,255,0.6), transparent);
-              background-size: 200px 200px;
-              animation: twinkle 3.2s ease-in-out infinite alternate;
-            }
-            .ocean-sparkles::before {
-              content: '';
-              position: absolute;
-              inset: 0;
-              background-image:
-                radial-gradient(1.5px 1.5px at 50px 70px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 140px 30px, rgba(170,225,255,0.7), transparent),
-                radial-gradient(2px 2px at 220px 110px, rgba(255,255,255,0.6), transparent),
-                radial-gradient(1.5px 1.5px at 90px 180px, rgba(150,210,255,0.7), transparent);
-              background-size: 320px 320px;
-              animation: twinkle 4.6s ease-in-out infinite alternate-reverse;
-            }
-            .ocean-sparkles::after {
-              content: '';
-              position: absolute;
-              inset: 0;
-              background-image:
-                radial-gradient(1px 1px at 40px 120px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1.5px 1.5px at 180px 60px, rgba(160,220,255,0.8), transparent),
-                radial-gradient(1px 1px at 240px 200px, rgba(255,255,255,0.6), transparent);
-              background-size: 260px 260px;
-              animation: twinkle 3.9s ease-in-out infinite alternate;
-              animation-delay: -1.4s;
             }
           `}</style>
           <div className="relative text-center max-w-4xl mx-auto">
