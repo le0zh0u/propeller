@@ -27,18 +27,20 @@ function WaterSurface() {
       precision highp float;
       varying vec2 vUv;
       uniform vec2 uRes;
-      uniform vec2 uRipRes;
       uniform float uTime;
       uniform sampler2D uRipple;
 
-      // layered sine interference — bounded 0..1 shimmer, reads as moving water
+      // layered sine interference — bounded 0..1 shimmer, reads as moving water.
+      // fine octaves are deliberately high-frequency: refraction needs ~50px
+      // detail to be visible when displaced
       float waves(vec2 p, float t) {
         float v = 0.0;
         v += sin(p.x * 9.0 + t * 0.9) * sin(p.y * 7.0 - t * 0.7);
-        v += sin((p.x * 1.3 + p.y) * 11.0 - t * 1.1) * 0.6;
-        v += sin((p.x - p.y * 0.8) * 15.0 + t * 0.5) * 0.35;
-        v += sin(p.x * 23.0 - t * 1.4) * sin(p.y * 19.0 + t) * 0.2;
-        return v / 2.15 * 0.5 + 0.5;
+        v += sin((p.x * 1.3 + p.y) * 16.0 - t * 1.1) * 0.6;
+        v += sin((p.x - p.y * 0.8) * 34.0 + t * 0.5) * 0.35;
+        v += sin(p.x * 61.0 - t * 1.4) * sin(p.y * 53.0 + t) * 0.2;
+        v += sin(p.x * 97.0 + t * 0.8) * sin(p.y * 83.0 - t * 0.6) * 0.15;
+        return v / 2.3 * 0.5 + 0.5;
       }
 
       vec3 background(vec2 uv) {
@@ -50,22 +52,19 @@ function WaterSurface() {
         vec2 d2 = p - vec2(0.75, 0.75);
         col += vec3(0.06, 0.06, 0.22) * exp(-4.0 * dot(d2, d2)); // indigo glow
         float wv = waves(p, uTime);
-        col += vec3(0.0, 0.38, 0.40) * pow(wv, 2.0) * 0.30;      // shimmer
+        col += vec3(0.0, 0.38, 0.40) * pow(wv, 1.8) * 0.45;      // shimmer
         return col;
       }
 
       void main() {
         vec2 uv = vUv;
-        vec2 texel = 1.0 / uRipRes;
-        float hx = texture2D(uRipple, uv + vec2(texel.x, 0.0)).r - texture2D(uRipple, uv - vec2(texel.x, 0.0)).r;
-        float hy = texture2D(uRipple, uv + vec2(0.0, texel.y)).r - texture2D(uRipple, uv - vec2(0.0, texel.y)).r;
-        vec2 grad = vec2(hx, hy);
-        vec3 col = background(uv + grad * 0.6);
-        // meniscus glint — light catching the curved surface at the ripple edge
-        col += vec3(0.25, 0.55, 0.55) * length(grad) * 1.4;
-        // animated dither to hide 8-bit heightfield banding
-        float n = fract(sin(dot(uv * uRes + vec2(uTime * 61.7, uTime * 83.3), vec2(12.9898, 78.233))) * 43758.5453);
-        col += (n - 0.5) * 0.012;
+        // texture encodes displacement directly: RG = push direction, B = intensity
+        vec4 data = texture2D(uRipple, uv);
+        vec2 dir = data.rg * 2.0 - 1.0;
+        float intensity = data.b;
+        vec3 col = background(uv + dir * intensity * 0.22);
+        // sheen on the displaced surface — sells the push on a dark scene
+        col += vec3(0.10, 0.32, 0.33) * intensity * 0.55;
         gl_FragColor = vec4(col, 1.0);
       }
     `;
@@ -97,7 +96,6 @@ function WaterSurface() {
     gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
     const uRes = gl.getUniformLocation(prog, 'uRes');
-    const uRipRes = gl.getUniformLocation(prog, 'uRipRes');
     const uTime = gl.getUniformLocation(prog, 'uTime');
     const uRipple = gl.getUniformLocation(prog, 'uRipple');
 
@@ -110,19 +108,30 @@ function WaterSurface() {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.uniform1i(uRipple, 0);
 
-    // --- ripple heightfield drawn on a low-res 2D canvas ---
+    // --- displacement field drawn on a small 2D canvas (à la Codrops):
+    // RG channels = push direction, B = intensity; blobs follow the cursor ---
     const ripCanvas = document.createElement('canvas');
+    ripCanvas.width = 128;
+    ripCanvas.height = 128;
     const rctx = ripCanvas.getContext('2d');
     if (!rctx) return;
 
-    type Ripple = { x: number; y: number; r: number; maxR: number; speed: number; strength: number };
+    // debug: ?debugwater shows the displacement field canvas
+    const debugWater = new URLSearchParams(window.location.search).has('debugwater');
+    if (debugWater) {
+      Object.assign(ripCanvas.style, { position: 'fixed', bottom: '0', left: '0', width: '300px', height: '300px', zIndex: '9999', border: '1px solid red' });
+      document.body.appendChild(ripCanvas);
+    }
+
+    const LIFE = 1.05; // ~64 frames, like the reference
+    type Ripple = { x: number; y: number; dx: number; dy: number; force: number; age: number; rad: number };
     let ripples: Ripple[] = [];
     let w = 0;
     let h = 0;
 
-    const addRipple = (x: number, y: number, size: number, strength: number, life: number) => {
-      ripples.push({ x, y, r: 0, maxR: size, speed: size / life, strength });
-      if (ripples.length > 80) ripples.shift();
+    const addRipple = (x: number, y: number, dx: number, dy: number, force: number) => {
+      ripples.push({ x, y, dx, dy, force, age: 0, rad: 0.05 + force * 0.04 });
+      if (ripples.length > 120) ripples.shift();
     };
 
     const resize = () => {
@@ -131,18 +140,13 @@ function WaterSurface() {
       h = canvas.clientHeight;
       canvas.width = Math.max(1, Math.round(w * dpr));
       canvas.height = Math.max(1, Math.round(h * dpr));
-      ripCanvas.width = Math.max(1, Math.round(w / 3));
-      ripCanvas.height = Math.max(1, Math.round(h / 3));
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, canvas.width, canvas.height);
-      gl.uniform2f(uRipRes, ripCanvas.width, ripCanvas.height);
     };
     resize();
     window.addEventListener('resize', resize);
 
     // pointer → ripples (canvas itself is pointer-events-none, so listen globally)
-    let lastX = -1;
-    let lastY = -1;
     const toUv = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
@@ -151,20 +155,17 @@ function WaterSurface() {
     };
     const onMove = (e: PointerEvent) => {
       const { x, y, inside } = toUv(e);
-      if (!inside) {
-        lastX = -1;
-        return;
-      }
-      const dx = lastX < 0 ? 999 : Math.hypot((x - lastX) * w, (y - lastY) * h);
-      if (dx > 24) {
-        addRipple(x, y, 0.45, 0.55, 3);
-        lastX = x;
-        lastY = y;
-      }
+      if (!inside) return;
+      const mx = e.movementX || 0;
+      const my = e.movementY || 0;
+      const dist = Math.hypot(mx, my);
+      if (dist < 1) return;
+      const force = Math.min(1, dist / 25);
+      addRipple(x, y, mx / dist, -my / dist, force); // uv y-axis is flipped
     };
     const onDown = (e: PointerEvent) => {
       const { x, y, inside } = toUv(e);
-      if (inside) addRipple(x, y, 0.8, 0.9, 4.5);
+      if (inside) addRipple(x, y, 0, 0, 1);
     };
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerdown', onDown, { passive: true });
@@ -175,33 +176,46 @@ function WaterSurface() {
       const dt = Math.min(0.05, (t - last) / 1000 || 0);
       last = t;
 
-      // advance + draw the heightfield. Each ripple is an annular wavefront —
-      // height lives only near radius r, so it travels outward like a real
-      // water wave and settles back to calm. Never drawn visibly itself.
-      rctx.clearRect(0, 0, ripCanvas.width, ripCanvas.height);
+      // advance ripples (momentum drift + ease-in/out envelope) and draw the
+      // displacement field — soft blobs encoding direction & intensity
+      rctx.fillStyle = 'rgb(128,128,0)';
+      rctx.fillRect(0, 0, ripCanvas.width, ripCanvas.height);
       const rw = ripCanvas.width;
       const rh = ripCanvas.height;
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rp = ripples[i];
-        rp.r += rp.speed * dt;
-        const p = rp.r / rp.maxR;
-        if (p >= 1) {
+        rp.age += dt;
+        const t = rp.age / LIFE;
+        if (t >= 1) {
           ripples.splice(i, 1);
           continue;
         }
-        const a = (1 - p) * (1 - p) * rp.strength;
+        // easeOutSine ramp-up for the first 30%, easeOutQuad fade for the rest
+        const env = t < 0.3 ? Math.sin((t / 0.3) * Math.PI / 2) : 1 - Math.pow((t - 0.3) / 0.7, 2);
+        const inten = env * rp.force;
+        // drift with momentum, slowing down as it ages
+        rp.x += rp.dx * rp.force * (1 - t) * dt * 0.1;
+        rp.y += rp.dy * rp.force * (1 - t) * dt * 0.1;
+
+        const rC = Math.round((rp.dx * 0.5 + 0.5) * 255);
+        const gC = Math.round((rp.dy * 0.5 + 0.5) * 255);
+        const bC = Math.round(Math.min(1, inten) * 255);
         const px = rp.x * rw;
         const py = (1 - rp.y) * rh;
-        const rad = Math.max(1, rp.r * rw);
+        const rad = Math.max(2, rp.rad * rw);
         const grad = rctx.createRadialGradient(px, py, 0, px, py, rad);
-        grad.addColorStop(0, 'rgba(255,255,255,0)');
-        grad.addColorStop(0.72, `rgba(255,255,255,${a * 0.25})`);
-        grad.addColorStop(0.9, `rgba(255,255,255,${a})`);
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        grad.addColorStop(0, `rgba(${rC},${gC},${bC},1)`);
+        grad.addColorStop(0.55, `rgba(${rC},${gC},${bC},0.5)`);
+        grad.addColorStop(1, `rgba(${rC},${gC},${bC},0)`);
         rctx.fillStyle = grad;
         rctx.beginPath();
         rctx.arc(px, py, rad, 0, Math.PI * 2);
         rctx.fill();
+      }
+      if (debugWater) {
+        rctx.fillStyle = '#fff';
+        rctx.font = '10px monospace';
+        rctx.fillText(`n=${ripples.length}`, 4, 12);
       }
 
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ripCanvas);
