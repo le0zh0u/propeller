@@ -1,4 +1,4 @@
-import { Linkedin, Youtube, ExternalLink, Mail, Globe } from 'lucide-react';
+import { Linkedin, Youtube, ExternalLink, Globe } from 'lucide-react';
 
 export default function FooterSection() {
   return (
@@ -19,14 +19,6 @@ export default function FooterSection() {
             <span className="text-[10vw] font-black leading-none tracking-tighter text-center px-4 transition-colors duration-500 group-hover:text-[#008080]">
               READY TO<br />CHURN THE<br />WATER?
             </span>
-            <span className="text-center px-4 space-y-2">
-              <span className="block text-sm md:text-base text-white/70 tracking-wide transition-colors duration-500 group-hover:text-[#008080]">
-                Move with clarity, confidence, and trusted local access.
-              </span>
-              <span className="block text-sm md:text-base text-white/70 tracking-wide transition-colors duration-500 group-hover:text-[#008080]">
-                Chart your course with Compass. Unlock the market with Access. Grow with PROPELLER.
-              </span>
-            </span>
           </a>
         </div>
       </div>
@@ -36,11 +28,6 @@ export default function FooterSection() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/40">&copy; 2026 PROPELLER. All rights reserved.</p>
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6">
-            <span className="uppercase tracking-[0.3em] text-xs text-white/40 font-semibold">Connect</span>
-            <a href="mailto:business@globalpropeller.com" className="flex items-center gap-1.5 text-sm text-white/60 hover:text-[#008080] transition-colors duration-200">
-              <Mail className="w-4 h-4" />business@globalpropeller.com
-            </a>
-            <span className="hidden md:block w-px h-4 bg-white/10" />
             <span className="uppercase tracking-[0.3em] text-xs text-white/40 font-semibold">Friends</span>
             <a href="https://www.thearch.global/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm text-white/60 hover:text-[#008080] transition-colors duration-200">
               <Globe className="w-4 h-4" />The Arch
