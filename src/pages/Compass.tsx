@@ -23,7 +23,7 @@ export default function Compass() {
           </div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 md:px-6 pb-20 md:pb-28 pt-40 w-full">
+        <div className="relative max-w-7xl mx-auto px-6 pb-20 md:pb-28 pt-40 w-full">
           <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">Phase 01 — Compass</span>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6">
             Before You Invest Capital,<br />Invest 90 Minutes.
@@ -47,7 +47,7 @@ export default function Compass() {
 
       {/* The Challenge — big quote layout */}
       <section className="py-20 md:py-28 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-3">
               <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold">The Challenge</span>
@@ -68,7 +68,7 @@ export default function Compass() {
 
       {/* The Solution — reversed editorial row */}
       <section className="py-20 md:py-28 bg-[#0d1321]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-9 lg:order-1 order-2">
               <h2 className="text-3xl md:text-5xl font-black text-white leading-tight mb-8">Strategic De-risking.</h2>
@@ -84,7 +84,7 @@ export default function Compass() {
 
       {/* Key Deliverables — 3-column card grid */}
       <section className="py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12 md:mb-16">
             <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">What's Included</span>
             <h2 className="text-3xl md:text-5xl font-black text-white">Key Deliverables.</h2>
@@ -110,7 +110,7 @@ export default function Compass() {
 
       {/* Investment — split panel */}
       <section id="investment" className="py-20 md:py-28 bg-[#0d1321]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-10 items-center bg-[#0a0f1a] rounded-2xl border border-white/5 p-8 md:p-12">
             <div>
               <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">Investment & Fit</span>

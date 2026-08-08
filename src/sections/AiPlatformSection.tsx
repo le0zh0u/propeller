@@ -8,7 +8,7 @@ const capabilities = [
 export default function AiPlatformSection() {
   return (
     <section className="bg-[#0a0f1a] py-20 md:py-32 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20">
           {/* Left: heading + intro + hero stat */}
           <div className="flex flex-col">

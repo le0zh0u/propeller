@@ -161,16 +161,18 @@ function ServicesDesktop() {
   return (
     <section ref={containerRef} className="relative hidden md:block" style={{ height: '300vh' }}>
       <div className="sticky top-0 h-screen flex flex-row items-center overflow-hidden bg-[#0a0f1a]">
-        {/* Left Text Column */}
-        <div className="w-2/5 flex flex-col justify-center px-12 lg:px-16">
-          <SectionHeading />
-        </div>
+        <div className="max-w-7xl mx-auto w-full px-6 flex flex-row items-center">
+          {/* Left Text Column */}
+          <div className="w-2/5 flex flex-col justify-center pr-12 lg:pr-16">
+            <SectionHeading />
+          </div>
 
-        {/* Right Cards Area */}
-        <div className="relative w-3/5 h-[52vh] self-center px-6 overflow-hidden">
-          {services.map((service, index) => (
-            <ServiceCard key={service.title} service={service} index={index} progress={progress} />
-          ))}
+          {/* Right Cards Area */}
+          <div className="relative w-3/5 h-[52vh] self-center overflow-hidden">
+            {services.map((service, index) => (
+              <ServiceCard key={service.title} service={service} index={index} progress={progress} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -24,13 +24,13 @@ function OceanSparkles() {
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         // weighted toward the lower 2/3, like light on a sea surface
-        y: h * 0.2 + Math.random() * h * 0.8,
+        y: h * 0.3 + Math.random() * h * 0.7,
         r: 0.8 + Math.random() * 2.2,
         speed: 0.8 + Math.random() * 2.2,
         phase: Math.random() * Math.PI * 2,
-        hue: 185 + Math.random() * 35,
+        hue: 175 + Math.random() * 30,
         drift: 4 + Math.random() * 10,
-        flare: Math.random() < 0.18,
+        flare: Math.random() < 0.3,
       }));
     };
 
@@ -54,33 +54,43 @@ function OceanSparkles() {
 
       for (const p of particles) {
         p.x += p.drift * dt;
-        if (p.x > w + 10) p.x = -10;
+        if (p.x > w + 20) p.x = -20;
 
         const tw = (Math.sin(time * p.speed + p.phase) + 1) / 2;
-        const a = tw * tw * 0.95; // spend more time dim, flash bright
+        const a = tw * tw * 0.9; // spend more time dim, flash bright
         if (a < 0.02) continue;
 
+        // gentle bobbing with the swell
+        const y = p.y + Math.sin(time * 0.6 + p.phase) * 6;
         const r = p.r * (0.6 + tw * 0.8);
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3.5);
-        g.addColorStop(0, `hsla(${p.hue}, 95%, 88%, ${a})`);
-        g.addColorStop(0.35, `hsla(${p.hue}, 95%, 72%, ${a * 0.55})`);
+
+        // horizontally-stretched glint — ripples stretch light into flat flecks
+        ctx.save();
+        ctx.translate(p.x, y);
+        ctx.scale(2.4, 0.55);
+        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 3.5);
+        g.addColorStop(0, `hsla(${p.hue}, 90%, 85%, ${a})`);
+        g.addColorStop(0.4, `hsla(${p.hue}, 90%, 68%, ${a * 0.5})`);
         g.addColorStop(1, 'transparent');
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r * 3.5, 0, Math.PI * 2);
+        ctx.arc(0, 0, r * 3.5, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
 
-        // star flare on peak twinkle
-        if (p.flare && tw > 0.65) {
-          const la = ((tw - 0.65) / 0.35) * 0.8;
-          const len = r * 6;
-          ctx.strokeStyle = `hsla(${p.hue}, 95%, 90%, ${la})`;
-          ctx.lineWidth = 0.8;
+        // horizontal shimmer streak on peak (no vertical spike — water, not stars)
+        if (p.flare && tw > 0.6) {
+          const la = ((tw - 0.6) / 0.4) * 0.55;
+          const len = r * (10 + p.drift);
+          const lg = ctx.createLinearGradient(p.x - len, y, p.x + len, y);
+          lg.addColorStop(0, 'transparent');
+          lg.addColorStop(0.5, `hsla(${p.hue}, 90%, 85%, ${la})`);
+          lg.addColorStop(1, 'transparent');
+          ctx.strokeStyle = lg;
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(p.x - len, p.y);
-          ctx.lineTo(p.x + len, p.y);
-          ctx.moveTo(p.x, p.y - len * 0.6);
-          ctx.lineTo(p.x, p.y + len * 0.6);
+          ctx.moveTo(p.x - len, y);
+          ctx.lineTo(p.x + len, y);
           ctx.stroke();
         }
       }
@@ -128,7 +138,7 @@ export default function OurStory() {
 
       <div className="relative z-10">
         {/* Hero — sparkling ocean background */}
-        <section className="min-h-[85vh] relative flex items-center justify-center px-4 md:px-6 overflow-hidden">
+        <section className="min-h-[85vh] relative flex items-center justify-center px-6 overflow-hidden">
           {/* Dynamic sparkling ocean (canvas glints + CSS caustics) */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="ocean-caustics absolute inset-0" />
@@ -162,7 +172,7 @@ export default function OurStory() {
 
         {/* Origin Story */}
         <section className="py-20 md:py-28">
-          <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="max-w-4xl mx-auto px-6">
             <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-4 block">Our Origin</span>
             <h2 className="text-4xl md:text-6xl font-black text-white mb-8">The Fish That Never Existed.</h2>
 
@@ -186,7 +196,7 @@ export default function OurStory() {
 
         {/* MIT Building 20 */}
         <section className="pb-20 md:pb-28">
-          <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="max-w-4xl mx-auto px-6">
             <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">MIT 2.0</span>
             <h2 className="text-4xl md:text-6xl font-black text-white mb-8">Building 20 — The Magical Incubator</h2>
 
@@ -209,7 +219,7 @@ export default function OurStory() {
 
         {/* Why Propeller — minimal numbered list */}
         <section className="pb-20 md:pb-28">
-          <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="max-w-4xl mx-auto px-6">
             <div className="mb-12 md:mb-16">
               <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-4 block">Why Propeller?</span>
               <h2 className="text-4xl md:text-6xl font-black text-white">What a Propeller Does.</h2>

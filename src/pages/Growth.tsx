@@ -14,7 +14,7 @@ export default function Growth() {
     <div className="min-h-screen bg-[#0a0f1a]">
       {/* Hero — split: text left, stacked giant typography right */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 pt-32 pb-20 w-full grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-6 pt-32 pb-20 w-full grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <span className="uppercase tracking-[0.3em] text-sm text-slate-400 font-semibold mb-4 block">Phase 03 — Growth</span>
             <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
@@ -54,7 +54,7 @@ export default function Growth() {
 
       {/* China Acceleration — editorial row */}
       <section className="py-20 md:py-28 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 grid lg:grid-cols-12 gap-8">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4">
             <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">China Acceleration</span>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">Flip the Script.</h2>
@@ -68,7 +68,7 @@ export default function Growth() {
 
       {/* The Challenge — quote band */}
       <section className="py-20 md:py-28 bg-[#0d1321]">
-        <div className="max-w-4xl mx-auto px-4 md:px-6">
+        <div className="max-w-4xl mx-auto px-6">
           <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-6 block">The Challenge</span>
           <h2 className="text-3xl md:text-5xl font-black text-white leading-tight mb-8">Execution Without the Overhead.</h2>
           <blockquote className="border-l-2 border-[#008080] pl-6 md:pl-8 text-lg md:text-xl text-slate-300 leading-relaxed">
@@ -79,7 +79,7 @@ export default function Growth() {
 
       {/* Key Deliverables — numbered editorial rows */}
       <section className="py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12 md:mb-16">
             <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">What's Included</span>
             <h2 className="text-3xl md:text-5xl font-black text-white">Key Deliverables.</h2>
@@ -108,7 +108,7 @@ export default function Growth() {
 
       {/* Investment — split panel */}
       <section id="investment" className="py-20 md:py-28 bg-[#0d1321]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-10 items-center bg-[#0a0f1a] rounded-2xl border border-white/5 p-8 md:p-12">
             <div>
               <span className="uppercase tracking-[0.3em] text-sm text-slate-400 font-semibold mb-4 block">Investment & Fit</span>

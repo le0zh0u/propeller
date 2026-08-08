@@ -26,7 +26,7 @@ export default function PortfolioSection() {
 
   return (
     <section id="portfolio" className="min-h-screen bg-[#0a0f1a] py-20 md:py-32">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12 md:mb-16">
           <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">Our Method</span>
           <h2 className="text-4xl md:text-6xl font-black text-white mb-4 md:mb-6">Intelligence. Communication.<br />Network.</h2>

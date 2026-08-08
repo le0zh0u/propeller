@@ -40,7 +40,7 @@ export default function Access() {
 
       {/* The Challenge — centered pull-quote */}
       <section className="py-20 md:py-28">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-6 block">The Challenge</span>
           <h2 className="text-3xl md:text-5xl font-black text-white leading-tight mb-8">Accessing the Real Ecosystem.</h2>
           <p className="text-lg text-slate-400 leading-relaxed mb-6">
@@ -54,7 +54,7 @@ export default function Access() {
 
       {/* The Solution — full-width band */}
       <section className="py-20 md:py-28 bg-[#0d1321] border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-10 items-center">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <span className="uppercase tracking-[0.3em] text-sm text-[#3533cd] font-semibold mb-4 block">The Solution</span>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">Agile Sourcing &<br />Tech Transfer.</h2>
@@ -73,7 +73,7 @@ export default function Access() {
 
       {/* Investment — centered card */}
       <section className="py-20 md:py-28 bg-[#0d1321]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
+        <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="bg-[#0a0f1a] rounded-2xl p-8 md:p-12 max-w-2xl mx-auto border border-white/5">
             <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-4 block">Investment & Fit</span>
             <h2 className="text-3xl font-black text-white mb-4">Ready to Execute.</h2>
@@ -186,20 +186,22 @@ function DeliverablesDesktop() {
   return (
     <section ref={containerRef} className="relative hidden md:block" style={{ height: '300vh' }}>
       <div className="sticky top-0 h-screen flex flex-row items-center overflow-hidden">
-        {/* Left Text Column */}
-        <div className="w-2/5 flex flex-col justify-center px-12 lg:px-16">
-          <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-2 block">What's Included</span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-3 md:mb-6">Key<br />Deliverables.</h2>
-          <p className="text-sm md:text-lg text-slate-400 max-w-sm">
-            Three ways we plug you directly into the inner circle.
-          </p>
-        </div>
+        <div className="max-w-7xl mx-auto w-full px-6 flex flex-row items-center">
+          {/* Left Text Column */}
+          <div className="w-2/5 flex flex-col justify-center pr-12 lg:pr-16">
+            <span className="uppercase tracking-[0.3em] text-sm text-[#008080] font-semibold mb-2 block">What's Included</span>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-3 md:mb-6">Key<br />Deliverables.</h2>
+            <p className="text-sm md:text-lg text-slate-400 max-w-sm">
+              Three ways we plug you directly into the inner circle.
+            </p>
+          </div>
 
-        {/* Right Cards Area */}
-        <div className="relative w-3/5 h-[52vh] self-center px-6 overflow-hidden">
-          {deliverables.map((item, index) => (
-            <StackedCard key={item.num} item={item} index={index} progress={progress} />
-          ))}
+          {/* Right Cards Area */}
+          <div className="relative w-3/5 h-[52vh] self-center overflow-hidden">
+            {deliverables.map((item, index) => (
+              <StackedCard key={item.num} item={item} index={index} progress={progress} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
