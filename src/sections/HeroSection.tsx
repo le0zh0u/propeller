@@ -94,10 +94,13 @@ export default function HeroSection() {
           </span>
         </div>
 
-        {/* C A G Giant Typography — Compass, Access, Growth */}
+        {/* C O G Giant Typography — the "O" is the concentric circles behind */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: cagOpacity }}>
-          <span className="font-black leading-none tracking-tighter text-white select-none flex items-center gap-[6vmin]" style={{ fontSize: '25vmin' }}>
-            <span>C</span><span>A</span><span>G</span>
+          <span className="font-black leading-none tracking-tighter text-white select-none flex items-center" style={{ fontSize: '25vmin' }}>
+            <span>C</span>
+            {/* spacer where the concentric circles show through as the letter O */}
+            <span className="inline-block" style={{ width: '0.78em' }} />
+            <span>G</span>
           </span>
         </div>
 
