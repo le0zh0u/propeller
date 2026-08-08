@@ -96,10 +96,10 @@ export default function HeroSection() {
 
         {/* C O G Giant Typography — the "O" is the concentric circles behind */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: cagOpacity }}>
-          <span className="font-black leading-none tracking-tighter text-white select-none flex items-center" style={{ fontSize: '25vmin' }}>
+          <span className="font-black leading-none text-white select-none flex items-center" style={{ fontSize: '25vmin' }}>
             <span>C</span>
             {/* spacer where the concentric circles show through as the letter O */}
-            <span className="inline-block" style={{ width: '0.78em' }} />
+            <span className="inline-block" style={{ width: '1.15em' }} />
             <span>G</span>
           </span>
         </div>
