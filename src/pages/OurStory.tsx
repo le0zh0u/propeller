@@ -1,99 +1,212 @@
 import { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 
-/* Canvas-rendered sparkling water glints (波光粼粼) */
-function OceanSparkles() {
+/* WebGL water surface — mouse movement churns ripples that refract the depths.
+   Technique: draw expanding rings to a 2D canvas → upload as a height texture →
+   fragment shader derives normals from the heightfield and distorts a procedural
+   underwater background (à la Codrops water distortion). */
+function WaterSurface() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const gl = canvas.getContext('webgl', { alpha: false, antialias: false });
+    if (!gl) return; // CSS caustics fallback remains visible
 
-    let raf = 0;
+    const VERT = `
+      attribute vec2 aPos;
+      varying vec2 vUv;
+      void main() {
+        vUv = aPos * 0.5 + 0.5;
+        gl_Position = vec4(aPos, 0.0, 1.0);
+      }
+    `;
+
+    const FRAG = `
+      precision highp float;
+      varying vec2 vUv;
+      uniform vec2 uRes;
+      uniform vec2 uRipRes;
+      uniform float uTime;
+      uniform sampler2D uRipple;
+
+      // layered sine interference — bounded 0..1 shimmer, reads as moving water
+      float waves(vec2 p, float t) {
+        float v = 0.0;
+        v += sin(p.x * 9.0 + t * 0.9) * sin(p.y * 7.0 - t * 0.7);
+        v += sin((p.x * 1.3 + p.y) * 11.0 - t * 1.1) * 0.6;
+        v += sin((p.x - p.y * 0.8) * 15.0 + t * 0.5) * 0.35;
+        v += sin(p.x * 23.0 - t * 1.4) * sin(p.y * 19.0 + t) * 0.2;
+        return v / 2.15 * 0.5 + 0.5;
+      }
+
+      vec3 background(vec2 uv) {
+        vec2 p = (uv - 0.5) * vec2(uRes.x / uRes.y, 1.0) + 0.5;
+        // deep water: faint teal depth below, dark above
+        vec3 col = mix(vec3(0.024, 0.100, 0.115), vec3(0.031, 0.047, 0.082), pow(uv.y, 0.8));
+        vec2 d1 = p - vec2(0.30, 0.30);
+        col += vec3(0.0, 0.16, 0.16) * exp(-5.0 * dot(d1, d1));  // teal glow
+        vec2 d2 = p - vec2(0.75, 0.75);
+        col += vec3(0.06, 0.06, 0.22) * exp(-4.0 * dot(d2, d2)); // indigo glow
+        float wv = waves(p, uTime);
+        col += vec3(0.0, 0.38, 0.40) * pow(wv, 2.0) * 0.30;      // shimmer
+        return col;
+      }
+
+      void main() {
+        vec2 uv = vUv;
+        vec2 texel = 1.0 / uRipRes;
+        float hx = texture2D(uRipple, uv + vec2(texel.x, 0.0)).r - texture2D(uRipple, uv - vec2(texel.x, 0.0)).r;
+        float hy = texture2D(uRipple, uv + vec2(0.0, texel.y)).r - texture2D(uRipple, uv - vec2(0.0, texel.y)).r;
+        vec2 grad = vec2(hx, hy);
+        vec3 col = background(uv + grad * 0.6);
+        // meniscus glint — light catching the curved surface at the ripple edge
+        col += vec3(0.25, 0.55, 0.55) * length(grad) * 1.4;
+        // animated dither to hide 8-bit heightfield banding
+        float n = fract(sin(dot(uv * uRes + vec2(uTime * 61.7, uTime * 83.3), vec2(12.9898, 78.233))) * 43758.5453);
+        col += (n - 0.5) * 0.012;
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    const compile = (type: number, src: string) => {
+      const sh = gl.createShader(type);
+      if (!sh) return null;
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) return null;
+      return sh;
+    };
+    const vs = compile(gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram();
+    if (!prog) return;
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    const quad = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'aPos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(prog, 'uRes');
+    const uRipRes = gl.getUniformLocation(prog, 'uRipRes');
+    const uTime = gl.getUniformLocation(prog, 'uTime');
+    const uRipple = gl.getUniformLocation(prog, 'uRipple');
+
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.uniform1i(uRipple, 0);
+
+    // --- ripple heightfield drawn on a low-res 2D canvas ---
+    const ripCanvas = document.createElement('canvas');
+    const rctx = ripCanvas.getContext('2d');
+    if (!rctx) return;
+
+    type Ripple = { x: number; y: number; r: number; maxR: number; speed: number; strength: number };
+    let ripples: Ripple[] = [];
     let w = 0;
     let h = 0;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    type Particle = { x: number; y: number; r: number; speed: number; phase: number; hue: number; drift: number; flare: boolean };
-    let particles: Particle[] = [];
-
-    const spawn = () => {
-      const count = Math.floor((w * h) / 7000);
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        // weighted toward the lower 2/3, like light on a sea surface
-        y: h * 0.3 + Math.random() * h * 0.7,
-        r: 0.8 + Math.random() * 2.2,
-        speed: 0.8 + Math.random() * 2.2,
-        phase: Math.random() * Math.PI * 2,
-        hue: 175 + Math.random() * 30,
-        drift: 4 + Math.random() * 10,
-        flare: Math.random() < 0.3,
-      }));
+    const addRipple = (x: number, y: number, size: number, strength: number, life: number) => {
+      ripples.push({ x, y, r: 0, maxR: size, speed: size / life, strength });
+      if (ripples.length > 80) ripples.shift();
     };
 
     const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       w = canvas.clientWidth;
       h = canvas.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      spawn();
+      canvas.width = Math.max(1, Math.round(w * dpr));
+      canvas.height = Math.max(1, Math.round(h * dpr));
+      ripCanvas.width = Math.max(1, Math.round(w / 3));
+      ripCanvas.height = Math.max(1, Math.round(h / 3));
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform2f(uRipRes, ripCanvas.width, ripCanvas.height);
     };
     resize();
     window.addEventListener('resize', resize);
 
+    // pointer → ripples (canvas itself is pointer-events-none, so listen globally)
+    let lastX = -1;
+    let lastY = -1;
+    const toUv = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = 1 - (e.clientY - rect.top) / rect.height;
+      return { x, y, inside: x >= 0 && x <= 1 && y >= 0 && y <= 1 };
+    };
+    const onMove = (e: PointerEvent) => {
+      const { x, y, inside } = toUv(e);
+      if (!inside) {
+        lastX = -1;
+        return;
+      }
+      const dx = lastX < 0 ? 999 : Math.hypot((x - lastX) * w, (y - lastY) * h);
+      if (dx > 24) {
+        addRipple(x, y, 0.45, 0.55, 3);
+        lastX = x;
+        lastY = y;
+      }
+    };
+    const onDown = (e: PointerEvent) => {
+      const { x, y, inside } = toUv(e);
+      if (inside) addRipple(x, y, 0.8, 0.9, 4.5);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerdown', onDown, { passive: true });
+
+    let raf = 0;
     let last = 0;
     const tick = (t: number) => {
       const dt = Math.min(0.05, (t - last) / 1000 || 0);
       last = t;
-      const time = t / 1000;
-      ctx.clearRect(0, 0, w, h);
 
-      for (const p of particles) {
-        p.x += p.drift * dt;
-        if (p.x > w + 20) p.x = -20;
-
-        const tw = (Math.sin(time * p.speed + p.phase) + 1) / 2;
-        const a = tw * tw * 0.9; // spend more time dim, flash bright
-        if (a < 0.02) continue;
-
-        // gentle bobbing with the swell
-        const y = p.y + Math.sin(time * 0.6 + p.phase) * 6;
-        const r = p.r * (0.6 + tw * 0.8);
-
-        // horizontally-stretched glint — ripples stretch light into flat flecks
-        ctx.save();
-        ctx.translate(p.x, y);
-        ctx.scale(2.4, 0.55);
-        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 3.5);
-        g.addColorStop(0, `hsla(${p.hue}, 90%, 85%, ${a})`);
-        g.addColorStop(0.4, `hsla(${p.hue}, 90%, 68%, ${a * 0.5})`);
-        g.addColorStop(1, 'transparent');
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(0, 0, r * 3.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // horizontal shimmer streak on peak (no vertical spike — water, not stars)
-        if (p.flare && tw > 0.6) {
-          const la = ((tw - 0.6) / 0.4) * 0.55;
-          const len = r * (10 + p.drift);
-          const lg = ctx.createLinearGradient(p.x - len, y, p.x + len, y);
-          lg.addColorStop(0, 'transparent');
-          lg.addColorStop(0.5, `hsla(${p.hue}, 90%, 85%, ${la})`);
-          lg.addColorStop(1, 'transparent');
-          ctx.strokeStyle = lg;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(p.x - len, y);
-          ctx.lineTo(p.x + len, y);
-          ctx.stroke();
+      // advance + draw the heightfield. Each ripple is an annular wavefront —
+      // height lives only near radius r, so it travels outward like a real
+      // water wave and settles back to calm. Never drawn visibly itself.
+      rctx.clearRect(0, 0, ripCanvas.width, ripCanvas.height);
+      const rw = ripCanvas.width;
+      const rh = ripCanvas.height;
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i];
+        rp.r += rp.speed * dt;
+        const p = rp.r / rp.maxR;
+        if (p >= 1) {
+          ripples.splice(i, 1);
+          continue;
         }
+        const a = (1 - p) * (1 - p) * rp.strength;
+        const px = rp.x * rw;
+        const py = (1 - rp.y) * rh;
+        const rad = Math.max(1, rp.r * rw);
+        const grad = rctx.createRadialGradient(px, py, 0, px, py, rad);
+        grad.addColorStop(0, 'rgba(255,255,255,0)');
+        grad.addColorStop(0.72, `rgba(255,255,255,${a * 0.25})`);
+        grad.addColorStop(0.9, `rgba(255,255,255,${a})`);
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        rctx.fillStyle = grad;
+        rctx.beginPath();
+        rctx.arc(px, py, rad, 0, Math.PI * 2);
+        rctx.fill();
       }
+
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ripCanvas);
+      gl.uniform1f(uTime, t / 1000);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -101,6 +214,8 @@ function OceanSparkles() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerdown', onDown);
     };
   }, []);
 
@@ -139,10 +254,10 @@ export default function OurStory() {
       <div className="relative z-10">
         {/* Hero — sparkling ocean background */}
         <section className="min-h-[85vh] relative flex items-center justify-center px-6 overflow-hidden">
-          {/* Dynamic sparkling ocean (canvas glints + CSS caustics) */}
+          {/* Interactive water surface (WebGL ripple distortion + CSS caustics fallback) */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="ocean-caustics absolute inset-0" />
-            <OceanSparkles />
+            <WaterSurface />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1a]/50 via-transparent to-[#0a0f1a]/80" />
           </div>
           <style>{`
